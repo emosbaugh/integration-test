@@ -1,0 +1,40 @@
+on: [push]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    # timeout-minutes: 5
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: install k3s
+        run: |
+          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
+          cat /etc/rancher/k3s/k3s.yaml
+          mkdir -p ~/.kube
+          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+
+      - name: install troubleshoot
+        run: |
+          RELEASE="$(curl -fsSL https://api.github.com/repos/replicatedhq/troubleshoot/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+          curl -fsSLO https://github.com/replicatedhq/troubleshoot/releases/download/$RELEASE/support-bundle_linux_amd64.tar.gz
+          tar -xzf support-bundle_linux_amd64.tar.gz
+          mv support-bundle_linux_amd64/support-bundle /usr/local/bin/kubectl-support_bundle
+          chmod +x /usr/local/bin/kubectl-support_bundle
+
+      - name: create namespace
+        run: kubectl create ns integration-test
+
+      - name: generate fixtures
+        run: kubectl -n integration-test apply -f $TEST/fixtures/
+        env:
+          TEST: integration/support-bundle/config-map/
+
+      - name: generate support bundle
+        run: kubectl support-bundle $TEST/spec.yaml
+        env:
+          TEST: integration/support-bundle/config-map/
+
+      - name: create namespace
+        run: kubectl delete ns integration-test

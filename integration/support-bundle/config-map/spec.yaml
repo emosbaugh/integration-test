@@ -1,0 +1,10 @@
+apiVersion: troubleshoot.sh/v1beta2
+kind: SupportBundle
+metadata:
+  name: integration-test
+spec:
+    collectors:
+        - configMap:
+            namespace: integration-test
+            name: game-demo
+            includeAllData: true
