@@ -24,6 +24,5 @@ jobs:
 
       - name: run tests
         run: |
+          export SUPPORT_BUNDLE_BINARY=`pwd`/support-bundle
           go test -v integration/support-bundle/integration_test.go
-        env:
-          SUPPORT_BUNDLE_BINARY: ./support-bundle
