@@ -5,6 +5,6 @@ metadata:
 spec:
     collectors:
         - configMap:
-            namespace: integration-test
+            namespace: "{{ .Namespace }}"
             name: game-demo
             includeAllData: true

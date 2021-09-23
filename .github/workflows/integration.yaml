@@ -20,21 +20,10 @@ jobs:
           RELEASE="$(curl -fsSL https://api.github.com/repos/replicatedhq/troubleshoot/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
           curl -fsSLO https://github.com/replicatedhq/troubleshoot/releases/download/$RELEASE/support-bundle_linux_amd64.tar.gz
           tar -xzf support-bundle_linux_amd64.tar.gz
-          mv support-bundle /usr/local/bin/kubectl-support_bundle
-          chmod +x /usr/local/bin/kubectl-support_bundle
+          chmod +x support-bundle
 
-      - name: create namespace
-        run: kubectl create ns integration-test
-
-      - name: generate fixtures
-        run: kubectl -n integration-test apply -f $TEST/fixtures/
+      - name: run tests
+        run: |
+          go test -v integration/support-bundle/integration_test.go
         env:
-          TEST: integration/support-bundle/config-map/
-
-      - name: generate support bundle
-        run: kubectl support-bundle $TEST/spec.yaml
-        env:
-          TEST: integration/support-bundle/config-map/
-
-      - name: create namespace
-        run: kubectl delete ns integration-test
+          SUPPORT_BUNDLE_BINARY: ./support-bundle
