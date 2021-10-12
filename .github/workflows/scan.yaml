@@ -24,7 +24,8 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'scan-output.sarif'
-          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'MEDIUM,HIGH,CRITICAL'
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
