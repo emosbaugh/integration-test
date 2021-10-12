@@ -22,13 +22,13 @@ jobs:
         id: scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: docker.io/library/postgres:10.17
+          image-ref: docker.io/library/postgres:10.18
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'scan-output.sarif'
           exit-code: '1'
-          severity: 'MEDIUM,HIGH,CRITICAL'
-
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true
       - name: 'Upload Artifact'
         if: always()
         uses: actions/upload-artifact@v2
