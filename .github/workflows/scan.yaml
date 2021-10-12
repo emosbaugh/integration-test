@@ -1,9 +1,8 @@
-name: release
+name: scan
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
 
@@ -21,8 +20,6 @@ jobs:
           template: '@/contrib/sarif.tpl'
           output: 'scan-output.sarif'
           exit-code: '0'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH,MEDIUM'
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
