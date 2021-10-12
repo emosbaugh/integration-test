@@ -38,7 +38,7 @@ func TestIntegration(t *testing.T) {
 
 			for _, file := range listFilesRecursive(t, filepath.Join(dir, "expects")) {
 				if err := expectsFileSupportBundle(t, dir, ns, tmp, bundle, file); err != nil {
-					t.Errorf("file: %s\n error: %s", file, err)
+					t.Errorf("%s ERROR\n%s", file, err)
 				}
 			}
 		})
