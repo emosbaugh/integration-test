@@ -20,7 +20,7 @@ jobs:
         id: scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: postgres:10.17
+          image-ref: docker.io/library/postgres:10.17
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'scan-output.sarif'
