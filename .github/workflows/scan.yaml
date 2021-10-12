@@ -10,12 +10,14 @@ on:
 jobs:
 
   scan:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
     steps:
+
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Scan postgres for vulnerabilities
         id: scan
         uses: aquasecurity/trivy-action@master
@@ -26,6 +28,7 @@ jobs:
           output: 'scan-output.sarif'
           exit-code: '1'
           severity: 'MEDIUM,HIGH,CRITICAL'
+
       - name: 'Upload Artifact'
         if: always()
         uses: actions/upload-artifact@v2
@@ -33,6 +36,7 @@ jobs:
           name: scan-output
           path: scan-output.sarif
           retention-days: 1
+
       - name: Upload scan report
         if: always()
         uses: github/codeql-action/upload-sarif@v1
