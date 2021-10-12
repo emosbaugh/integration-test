@@ -8,3 +8,16 @@ spec:
             namespace: "{{ .Namespace }}"
             name: game-demo
             includeAllData: true
+        - configMap:
+            namespace: "{{ .Namespace }}"
+            name: game-demo
+            key: game.properties
+            includeValue: true
+        - configMap:
+            namespace: "{{ .Namespace }}"
+            name: game-demo
+            key: player_initial_lives
+        - configMap:
+            namespace: "{{ .Namespace }}"
+            name: game-demo
+            key: key_not_found

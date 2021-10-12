@@ -1,4 +1,8 @@
-on: [push]
+name: integration
+
+on:
+  pull_request:
+    branches: [ main ]
 
 jobs:
   integration-test:
@@ -15,7 +19,21 @@ jobs:
           mkdir -p ~/.kube
           cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 
-      - name: install troubleshoot
+      - name: install kots
+        run: |
+          RELEASE="$(curl -fsSL https://api.github.com/repos/replicatedhq/kots/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+          curl -fsSLO https://github.com/replicatedhq/kots/releases/download/$RELEASE/kots_linux_amd64.tar.gz
+          tar -xzf kots_linux_amd64.tar.gz
+          chmod +x kots
+          echo "$KOTS_APP_LICENSE" > license.yaml # from github actions secret
+          ./kots install qakotsregression/stable \
+            --namespace qakotsregression \
+            --shared-password mysupersecretpassword \
+            --license-file license.yaml \
+            --config-values integration/assets/config-values.yaml \
+            --skip-preflights
+
+      - name: download troubleshoot binary
         run: |
           RELEASE="$(curl -fsSL https://api.github.com/repos/replicatedhq/troubleshoot/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
           curl -fsSLO https://github.com/replicatedhq/troubleshoot/releases/download/$RELEASE/support-bundle_linux_amd64.tar.gz

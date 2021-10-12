@@ -1,0 +1,9 @@
+{
+  "namespace": "{{ .Namespace }}",
+  "name": "game-demo",
+  "key": "game.properties",
+  "configMapExists": true,
+  "keyExists": true,
+  "value": "enemy.types=aliens,monsters\nplayer.maximum-lives=5    \n",
+  "data": null
+}
