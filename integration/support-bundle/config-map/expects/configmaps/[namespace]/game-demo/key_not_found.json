@@ -1,0 +1,8 @@
+{
+  "namespace": "{{ .Namespace }}",
+  "name": "game-demo",
+  "key": "key_not_found",
+  "configMapExists": true,
+  "keyExists": false,
+  "data": null
+}
