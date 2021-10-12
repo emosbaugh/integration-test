@@ -23,6 +23,12 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH,MEDIUM'
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: scan-output
+          path: scan-output.sarif
+          retention-days: 1
       - name: Upload scan report
         uses: github/codeql-action/upload-sarif@v1
         with:
