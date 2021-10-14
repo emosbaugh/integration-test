@@ -22,11 +22,11 @@ jobs:
         id: scan
         uses: emosbaugh/scan-action@inputs-ignore-unfixed
         with:
-          image: docker.io/library/postgres:10.18
+          image: docker.io/library/postgres:10.17
           acs-report-enable: true
           severity-cutoff: medium
           # ignore-unfixed: true
-          fail-build: false
+          # fail-build: false
 
       - name: Upload Anchore scan SARIF report
         if: always()
