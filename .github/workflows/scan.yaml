@@ -25,7 +25,7 @@ jobs:
           image: docker.io/library/postgres:10.18
           acs-report-enable: true
           severity-cutoff: medium
-          ignore-unfixed: true
+          # ignore-unfixed: true
           fail-build: false
 
       - name: Upload Anchore scan SARIF report
