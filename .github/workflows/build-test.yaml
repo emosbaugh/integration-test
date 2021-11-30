@@ -14,8 +14,28 @@ jobs:
   automerge:
     needs: build
     runs-on: ubuntu-latest
+
+    # only run for dependabot PRs
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
     steps:
-    - uses: fastify/github-action-merge-dependabot@v2.7.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        target: minor
+      - id: dependabot
+        uses: dependabot/fetch-metadata@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: auto-merge conditions
+        id: auto-merge-conditions
+        if: |
+          (
+            steps.dependabot.outputs.update-type == 'version-update:semver-patch'
+          ) || (
+            steps.dependabot.outputs.update-type == 'version-update:semver-minor'
+          )
+        run: echo "::notice ::auto-merge conditions satisfied"
+
+      - name: auto-merge
+        if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
+        uses: pascalgn/automerge-action@v0.14.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
