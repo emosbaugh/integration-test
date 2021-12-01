@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # only run for dependabot pull requests
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    # if: ${{ github.actor == 'dependabot[bot]' }}
 
     steps:
 
