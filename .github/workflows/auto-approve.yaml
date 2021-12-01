@@ -25,9 +25,9 @@ jobs:
         run: echo "::notice ::build-test success"
 
       - name: build-test failure
-        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
         run: |
-          echo "::notice ::build-test failure"
+          echo "::notice ::build-test conclusion ${{ github.event.workflow_run.conclusion }}"
           exit 1
 
       - name: dependabot metadata
