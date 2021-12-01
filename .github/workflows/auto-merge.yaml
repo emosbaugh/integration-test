@@ -45,12 +45,6 @@ jobs:
           )
         run: echo "::notice ::auto-merge conditions satisfied"
 
-      - name: auto-approve
-        uses: hmarr/auto-approve-action@v2
-        if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
       # auto-merge will wait for status checks that are required in the branch protection rules
       - name: auto-merge
         if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
