@@ -34,12 +34,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: wait for build-test to succeed
-        uses: lewagon/wait-on-check-action@v1.1.1
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        id: wait-build-test
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: build-test-success
           ref: ${{ github.event.pull_request.head.sha }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: build-test-success
-          allowed-conclusions: success
 
       - name: auto-approve conditions
         id: auto-approve-conditions
