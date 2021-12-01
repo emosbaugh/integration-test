@@ -1,0 +1,51 @@
+name: auto-merge
+
+on:
+  # This workflow trigger may lead to malicious PR authors being able to obtain repository write permissions or stealing repository secrets. 
+  # Please read https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+  pull_request_target:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+
+    # only run for dependabot PRs
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - id: dependabot
+        uses: dependabot/fetch-metadata@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: auto-merge conditions
+        id: auto-merge-conditions
+        if: |
+          (
+            steps.dependabot.outputs.update-type == 'version-update:semver-patch'
+          ) || (
+            steps.dependabot.outputs.update-type == 'version-update:semver-minor'
+          )
+        run: echo "::notice ::auto-merge conditions satisfied"
+
+      - name: auto-merge
+        if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
+        uses: pascalgn/automerge-action@v0.14.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
