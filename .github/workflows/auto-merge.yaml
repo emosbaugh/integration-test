@@ -36,6 +36,7 @@ jobs:
 
       - name: auto-merge conditions
         id: auto-merge-conditions
+        # if this is a minor or patch version update
         if: |
           (
             steps.dependabot.outputs.update-type == 'version-update:semver-patch'
