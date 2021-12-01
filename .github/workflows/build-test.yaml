@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: succeed
         run: |
-          sleep 100
+          sleep 5
           echo "SUCCESS!"
           exit 0
 
