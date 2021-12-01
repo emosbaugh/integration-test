@@ -11,10 +11,3 @@ jobs:
           sleep 100
           echo "SUCCESS!"
           exit 0
-
-      - name: auto-approve
-        uses: hmarr/auto-approve-action@v2
-        # only run for dependabot prs
-        if: ${{ github.actor == 'dependabot[bot]' }}
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
