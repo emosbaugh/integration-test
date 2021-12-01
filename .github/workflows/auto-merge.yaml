@@ -47,7 +47,7 @@ jobs:
 
       - name: auto-approve
         uses: hmarr/auto-approve-action@v2
-        if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
+        if: ${{ steps.auto-approve-conditions.conclusion == 'success' }}
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
