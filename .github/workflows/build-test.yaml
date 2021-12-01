@@ -9,7 +9,7 @@ jobs:
       - name: succeed
         run: |
           sleep 5
-          echo "SUCCESS!!!"
+          echo "SUCCESS!"
           exit 0
 
   build-test-success:
