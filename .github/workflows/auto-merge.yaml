@@ -22,7 +22,7 @@ on:
   status: {}
 
 jobs:
-  automerge:
+  autoapprove:
     runs-on: ubuntu-latest
 
     # only run for dependabot prs
@@ -34,16 +34,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: auto-merge conditions
-        id: auto-merge-conditions
-        # only auto-merge if this is a minor or patch version update
+      - name: auto-approve conditions
+        id: auto-approve-conditions
+        # only auto-approve if this is a minor or patch version update
         if: |
           (
             steps.dependabot.outputs.update-type == 'version-update:semver-patch'
           ) || (
             steps.dependabot.outputs.update-type == 'version-update:semver-minor'
           )
-        run: echo "::notice ::auto-merge conditions satisfied"
+        run: echo "::notice ::auto-approve conditions satisfied"
 
       - name: auto-approve
         uses: hmarr/auto-approve-action@v2
@@ -51,10 +51,21 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
+  automerge:
+    runs-on: ubuntu-latest
+    needs: [ autoapprove ]
+
+    # only run for dependabot prs
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
+    steps:
+
       # auto-merge will wait for status checks that are required in the branch protection rules
       - name: auto-merge
-        if: ${{ steps.auto-merge-conditions.conclusion == 'success' }}
         uses: pascalgn/automerge-action@v0.14.3
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: ""
+          MERGE_REQUIRED_APPROVALS: "1"
+          MERGE_RETRIES: "10"
+          MERGE_RETRY_SLEEP: "2000"
