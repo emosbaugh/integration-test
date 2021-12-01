@@ -1,49 +1,21 @@
-###############################################################################
-# This action will automatically merge dependabot PR's if they pass all branch
-# protection rules including approval and status checks.
-###############################################################################
-
-name: dependabot-automerge
-
-on:
-  # This workflow trigger may lead to malicious PR authors being able to obtain repository write
-  # permissions or stealing repository secrets. 
-  # Please read https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-  pull_request_target:
-    types:
-      - labeled
-      - unlabeled
-      - synchronize
-      - opened
-      - edited
-      - ready_for_review
-      - reopened
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
-  check_suite:
-    types:
-      - completed
-  status: {}
-
+name: Dependabot auto-merge
+on: pull_request_target
+permissions:
+  pull-requests: write
+  contents: write
 jobs:
-  auto-merge:
+  dependabot:
     runs-on: ubuntu-latest
-
-    # only run for dependabot pull requests
     if: ${{ github.actor == 'dependabot[bot]' }}
-
     steps:
-
-      # auto-merge will wait for the branch protection rules, including required status checks,
-      # for up to 5 minutes (MERGE_RETRIES * MERGE_RETRY_SLEEP).
-      # at the time this pull request was submitted, build-test was taking ~3m 30s.
-      - name: auto-merge
-        uses: pascalgn/automerge-action@v0.14.3
+      - name: Dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v1.1.1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Enable auto-merge for Dependabot PRs
+        if: ${{contains(steps.dependabot-metadata.outputs.dependency-names, 'rails') && steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch'}}
+        run: gh pr merge --auto --merge "$PR_URL"
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ""
-          MERGE_REQUIRED_APPROVALS: "1"
-          MERGE_RETRIES: "30"
-          MERGE_RETRY_SLEEP: "10000"
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

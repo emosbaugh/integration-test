@@ -1,52 +1,20 @@
-###############################################################################
-# This action will automatically approve dependabot PR's that update minor and
-# patch versions.
-###############################################################################
-
-name: dependabot-autoapprove
-
-on:
-  workflow_run:
-    workflows: [ "build-test" ]
-    types:
-      - completed
-
+name: Dependabot auto-approve
+on: pull_request_target
+permissions:
+  pull-requests: write
 jobs:
-  auto-approve:
+  dependabot:
     runs-on: ubuntu-latest
-
-    # only run for dependabot pull requests
-    # if: ${{ github.actor == 'dependabot[bot]' }}
-
+    # Checking the actor will prevent your Action run failing on non-Dependabot PRs
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-
-      - name: build-test success
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        run: echo "::notice ::build-test success"
-
-      - name: build-test failure
-        if: ${{ github.event.workflow_run.conclusion != 'success' }}
-        run: |
-          echo "::notice ::build-test conclusion ${{ github.event.workflow_run.conclusion }}"
-          exit 1
-
-      - name: dependabot metadata
+      - name: Dependabot metadata
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v1.1.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: auto-approve conditions
-        id: auto-approve-conditions
-        # only auto-approve if this is a minor or patch version update
-        if: |
-          ( steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' )
-          ||
-          ( steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor' )
-        run: echo "::notice ::auto-approve conditions satisfied"
-
-      - name: auto-approve
-        uses: hmarr/auto-approve-action@v2
-        if: ${{ steps.auto-approve-conditions.conclusion == 'success' }}
-        with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
