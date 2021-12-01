@@ -1,0 +1,63 @@
+###############################################################################
+# This action will automatically approve dependabot PR's that update minor and
+# patch versions.
+###############################################################################
+
+name: dependabot-autoapprove
+
+on:
+  # This workflow trigger may lead to malicious PR authors being able to obtain repository write
+  # permissions or stealing repository secrets. 
+  # Please read https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+  pull_request_target:
+    types:
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+
+    # only run for dependabot pull requests
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
+    steps:
+
+      - name: dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: wait for build-test to succeed
+        uses: lewagon/wait-on-check-action@v1.1.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          check-name: build-test-success
+          allowed-conclusions: success
+
+      - name: auto-approve conditions
+        id: auto-approve-conditions
+        # only auto-approve if this is a minor or patch version update
+        if: |
+          (
+            steps.wait-build-test.outputs.conclusion == 'success'
+            &&
+            (
+              ( steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' )
+              ||
+              ( steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor' )
+            )
+          )
+        run: echo "::notice ::auto-approve conditions satisfied"
+
+      - name: auto-approve
+        uses: hmarr/auto-approve-action@v2
+        if: ${{ steps.auto-approve-conditions.conclusion == 'success' }}
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -11,3 +11,10 @@ jobs:
           sleep 100
           echo "SUCCESS!"
           exit 0
+
+  build-test-success:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - run: echo "::notice ::build test success"
