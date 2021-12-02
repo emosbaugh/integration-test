@@ -3,12 +3,15 @@
 # pull requests.
 ###############################################################################
 
-name: dependabot-automerge
+name: dependabot-buildfailure
 
 on:
   workflow_run:
     workflows: [ "build-test" ]
     types: [ completed ]
+
+permissions:
+  pull-requests: read
 
 jobs:
 
