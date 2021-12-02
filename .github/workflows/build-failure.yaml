@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: create shortcut story if auto merge fails
         run: |
-          PR_DESCRIPTION="$(gh pr view "${PR_URL}" | sed -n '/--/q;p')"
+          PR_DESCRIPTION="$(gh pr view --repo "${REPO_NAME}" "${PR_URL}" | sed -n '/--/q;p')"
           echo PR_DESCRIPTION
           echo $PR_DESCRIPTION
         env:
@@ -33,6 +33,7 @@ jobs:
           SHORTCUT_SECRET: ${{ secrets.SHORTCUT_API_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+          REPO_NAME: ${{ github.repository }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_URL: ${{ github.event.pull_request.html_url }}
 
