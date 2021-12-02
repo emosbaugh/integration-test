@@ -1,0 +1,45 @@
+###############################################################################
+# This action will create a shortcut story when build-test fails for dependabot
+# pull requests.
+###############################################################################
+
+name: dependabot-automerge
+
+on:
+  workflow_run:
+    workflows: [ "build-test" ]
+    types: [ completed ]
+
+jobs:
+
+  on-failure:
+    runs-on: ubuntu-latest
+    # only run for dependabot pull requests
+    if: |
+      (
+        github.event.workflow_run.conclusion == 'failure'
+      )
+    steps:
+      - name: create shortcut story if auto merge fails
+        run: |
+          PR_DESCRIPTION="$(gh pr view "${PR_URL}" | sed -n '/--/q;p')"
+          echo PR_DESCRIPTION
+          echo $PR_DESCRIPTION
+        env:
+          SHORTCUT_SECRET: ${{ secrets.SHORTCUT_API_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+
+          # curl --location --request POST 'https://api.app.shortcut.com/api/v3/stories' \
+          #   --header "Shortcut-Token: ${SHORTCUT_SECRET}" \
+          #   --header 'Content-Type: application/json' \
+          #   --data-raw "{ \
+          #     \"group_id\": \"6125060f-c490-4005-8dd7-165aa0b9cc18\", \
+          #     \"owner_ids\": [\"61118e83-225b-4bff-9ae1-e5342ae0868f\"], \
+          #     \"name\": \"${GITHUB_ACTOR} Automerge Failed '${PR_TITLE}'\", \
+          #     \"story_type\": \"chore\", \
+          #     \"description\": \"Dependabot was unable to automatically merge package update.\\n\\n${PR_DESCRIPTION}\", \
+          #     \"workflow_state_id\": 500122316, \
+          #     \"estimate\": 1 }"

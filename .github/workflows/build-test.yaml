@@ -10,7 +10,7 @@ jobs:
         run: |
           sleep 5
           echo "SUCCESS!"
-          exit 0
+          exit 1
 
   build-test-success:
     runs-on: ubuntu-latest
