@@ -25,6 +25,7 @@ jobs:
           PR_DESCRIPTION="$(gh pr view "${PR_URL}" | sed -n '/--/q;p')"
           echo PR_DESCRIPTION
           echo $PR_DESCRIPTION
+          echo blah
         env:
           SHORTCUT_SECRET: ${{ secrets.SHORTCUT_API_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
