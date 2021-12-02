@@ -29,6 +29,7 @@ jobs:
           echo PR_DESCRIPTION
           echo $PR_DESCRIPTION
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHORTCUT_SECRET: ${{ secrets.SHORTCUT_API_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_REF: ${{ github.event.pull_request.head.sha || github.sha }}
