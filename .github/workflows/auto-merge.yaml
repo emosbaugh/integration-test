@@ -67,6 +67,20 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Approve Dependabot PR
+        if: ${{ steps.auto-approve-conditions.conclusion != 'success' }}
+        run: |
+          curl -X GET \
+            -H "Content-Type: application/json" \
+            -H "Shortcut-Token: $SHORTCUT_API_TOKEN" \
+            -d '{ "page_size": 1, "query": "title:\"Automerge Failed for #${PR_NUMBER}\"" }' \
+            -L "https://api.app.shortcut.com/api/v3/search/stories"
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Auto-merge will wait for the branch protection rules, including approval and required
       # status checks.
       - name: Enable auto-merge for Dependabot PR
