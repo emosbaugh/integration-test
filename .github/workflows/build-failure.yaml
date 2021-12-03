@@ -30,9 +30,9 @@ jobs:
           PR_TITLE="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json title --jq '.title')"
           PR_BODY="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" | sed -n '/--/q;p')"
 
-          EXISTING_STORY_ID="$(gh pr view --repo replicatedhq/kurl "${PR_NUMBER}" --json comments | grep -o '\[sc-[^]]*' | grep -o '[0-9]*')"
+          EXISTING_STORY_ID="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json comments | grep -o '\[sc-[^]]*' | grep -o '[0-9]*')"
           if [ -n "${EXISTING_STORY_ID}" ] ; then
-            gh pr comment --repo replicatedhq/kurl "${PR_NUMBER}" --body "${PR_TITLE}\n\n${PR_BODY}"
+            gh pr comment --repo "${GITHUB_REPO}" "${PR_NUMBER}" --body "${PR_TITLE}\n\n${PR_BODY}"
 
             echo "::notice ::shortcut story already exists"
             exit 0
@@ -52,7 +52,7 @@ jobs:
             -L "https://api.app.shortcut.com/api/v3/stories")"
           NEW_STORY_ID="$(echo "${NEW_STORY}" | grep -o '"id":[0-9]*' | grep -o '[0-9]*')"
 
-          gh pr comment --repo replicatedhq/kurl "${PR_NUMBER}" --body "[sc-${NEW_STORY_ID}]"
+          gh pr comment --repo "${GITHUB_REPO}" "${PR_NUMBER}" --body "[sc-${NEW_STORY_ID}]"
 
           echo "::notice ::shortcut story created"
         env:
