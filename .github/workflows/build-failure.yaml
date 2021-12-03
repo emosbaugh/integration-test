@@ -53,7 +53,7 @@ jobs:
               \"project_id\": 28614, \
               \"story_type\": \"chore\", \
               \"workflow_state_id\": 500122316, \
-              \"labels\": [{\"id\"": 39960}], \
+              \"labels\": [{ \"id\": 39960 }], \
               \"name\": \"${STORY_NAME}\", \
               \"description\": \"${STORY_DESCRIPTION}\" }" \
             -L "https://api.app.shortcut.com/api/v3/stories")"
