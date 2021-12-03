@@ -94,7 +94,6 @@ jobs:
           SHORTCUT_API_TOKEN: ${{ secrets.SHORTCUT_API_TOKEN }}
           GITHUB_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
 
