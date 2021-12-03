@@ -8,9 +8,9 @@ jobs:
     steps:
       - name: succeed
         run: |
-          sleep 5
+          sleep 1
           echo "SUCCESS!"
-          exit 0
+          exit 1
 
   build-test-success:
     runs-on: ubuntu-latest
