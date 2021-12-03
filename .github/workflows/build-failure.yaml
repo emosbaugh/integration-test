@@ -26,6 +26,7 @@ jobs:
 
       - name: Create shortcut story if build-test fails
         run: |
+          set -x
           PR_URL="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json url --jq '.url')"
           PR_TITLE="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json title --jq '.title')"
 
