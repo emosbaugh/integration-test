@@ -75,7 +75,7 @@ jobs:
             curl -X POST \
               -H "Content-Type: application/json" \
               -H "Shortcut-Token: ${SHORTCUT_API_TOKEN}" \
-              -d '{ "text": "${STORY_DESCRIPTION}" }' \
+              -d "{ \"text\": \"${STORY_DESCRIPTION}\" }" \
               -L "https://api.app.shortcut.com/api/v3/stories/${EXISTING_STORY_ID}/comments"
 
             echo "::notice ::shortcut story already exists"
