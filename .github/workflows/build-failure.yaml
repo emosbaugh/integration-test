@@ -26,6 +26,8 @@ jobs:
 
       - name: Create shortcut story if build-test fails
         run: |
+          set -x
+
           PR_URL="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json url --jq '.url')"
           PR_TITLE="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json title --jq '.title')"
           PR_BODY="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" | sed -n '/--/q;p')"
@@ -37,7 +39,7 @@ jobs:
           if [ -n "${EXISTING_STORY_ID}" ] ; then
             curl -X POST \
               -H "Content-Type: application/json" \
-              -H "Shortcut-Token: $SHORTCUT_API_TOKEN" \
+              -H "Shortcut-Token: ${SHORTCUT_API_TOKEN}" \
               -d '{ "text": "${STORY_DESCRIPTION}" }' \
               -L "https://api.app.shortcut.com/api/v3/stories/${EXISTING_STORY_ID}/comments"
 
