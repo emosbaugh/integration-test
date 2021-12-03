@@ -50,6 +50,8 @@ jobs:
               \"workflow_state_id\": 500122316, \
               \"estimate\": 1 }" \
             -L "https://api.app.shortcut.com/api/v3/stories"
+          
+          un: echo "::notice ::shortcut story created"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHORTCUT_API_TOKEN: ${{ secrets.SHORTCUT_API_TOKEN }}
