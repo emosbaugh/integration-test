@@ -20,6 +20,8 @@ jobs:
     # only run for dependabot pull requests
     if: |
       (
+        github.actor == 'dependabot[bot]'
+      ) && (
         github.event.workflow_run.conclusion == 'failure'
       )
     steps:
