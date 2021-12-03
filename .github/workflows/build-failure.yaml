@@ -29,9 +29,9 @@ jobs:
           EXISTING_STORY="$(curl -X GET \
             -H "Content-Type: application/json" \
             -H "Shortcut-Token: ${SHORTCUT_API_TOKEN}" \
-            -d '{ "page_size": 1, "query": "title:\"Automerge Failed for #${PR_NUMBER}\"" }' \
+            -d "{ \"page_size\": 1, \"query\": \"title:\\\"Automerge Failed for #${PR_NUMBER}\\\"\" }" \
             -L "https://api.app.shortcut.com/api/v3/search/stories")"
-          if echo "${EXISTING_STORY}" | grep -q 'Automerge Failed for #${PR_NUMBER} ' ; then
+          if echo "${EXISTING_STORY}" | grep -q "Automerge Failed for #${PR_NUMBER} " ; then
             echo "::notice ::shortcut story already exists"
             exit 0
           fi
