@@ -28,7 +28,8 @@ jobs:
         run: |
           EXISTING_STORY_ID="$(gh pr view --repo "${GITHUB_REPO}" "${PR_NUMBER}" --json comments | grep -o '\[sc-[^]]*' | grep -o '[0-9]*' || true)"
           if [ -n "${EXISTING_STORY_ID}" ] ; then
-            gh pr comment --repo "${GITHUB_REPO}" "${PR_NUMBER}" --body "Auto-merge failed - build-test workflow run failed ${{ github.event.workflow_run.html_url }}"
+            COMMENT_BODY="Auto-merge failed - build-test workflow run failed ${{ github.event.workflow_run.html_url }}"
+            gh pr comment --repo "${GITHUB_REPO}" "${PR_NUMBER}" --body "${COMMENT_BODY}"
 
             echo "::notice ::shortcut story already exists"
             exit 0
