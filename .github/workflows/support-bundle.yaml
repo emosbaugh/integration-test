@@ -37,5 +37,7 @@ jobs:
           tar xzf support-bundle_linux_amd64.tar.gz
           ./support-bundle -n default https://kots.io
           BUNDLE="$(ls -1 | grep 'support-bundle-.*.tar.gz')"
+          echo "$BUNDLE"
+          echo "aws s3 cp ${BUNDLE} s3://kots-e2e-build-test-support-bundles/${BUNDLE}"
           aws s3 cp "${BUNDLE}" "s3://kots-e2e-build-test-support-bundles/${BUNDLE}"
           run: echo "::notice ::support bundle uploaded to https://kots-e2e-build-test-support-bundles.s3.amazonaws.com/${BUNDLE}"
