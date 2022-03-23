@@ -28,6 +28,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.E2E_SUPPORT_BUNDLE_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_SUPPORT_BUNDLE_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
+          KOTS_NAMESPACE: default
         run: |
           RELEASE="$(
             curl -sfL https://api.github.com/repos/replicatedhq/troubleshoot/releases/latest | \
@@ -36,9 +37,7 @@ jobs:
           )"
           curl -fsLO "https://github.com/replicatedhq/troubleshoot/releases/download/${RELEASE}/support-bundle_linux_amd64.tar.gz"
           tar xzf support-bundle_linux_amd64.tar.gz
-          ./support-bundle -n default https://kots.io
+          ./support-bundle -n "${KOTS_NAMESPACE}" https://kots.io
           BUNDLE="$(ls -1 | grep 'support-bundle-.*.tar.gz')"
-          echo "$BUNDLE"
-          echo "aws s3 cp ${BUNDLE} s3://kots-e2e-build-test-support-bundles/${BUNDLE}"
           aws s3 cp "${BUNDLE}" "s3://kots-e2e-build-test-support-bundles/${BUNDLE}"
-          run: echo "::notice ::support bundle uploaded to https://kots-e2e-build-test-support-bundles.s3.amazonaws.com/${BUNDLE}"
+          echo "::notice ::support bundle uploaded to https://kots-e2e-build-test-support-bundles.s3.amazonaws.com/${BUNDLE}"
