@@ -34,4 +34,5 @@ jobs:
           )"
           curl -fsLO "https://github.com/replicatedhq/troubleshoot/releases/download/${RELEASE}/support-bundle_linux_amd64.tar.gz"
           tar xzf support-bundle_linux_amd64.tar.gz
-          ./support-bundle --namespace minimal-rbac
+          ./support-bundle -n default https://kots.io
+
