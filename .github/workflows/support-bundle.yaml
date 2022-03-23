@@ -1,0 +1,37 @@
+name: support-bundle
+
+on: [ pull_request ]
+
+jobs:
+  support-bundle:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s_version: [v1.23.3-k3s1]
+    steps:
+      - uses: replicatedhq/action-k3s@main
+        id: k3s
+        with:
+          version: ${{ matrix.k8s_version }}
+          ports: '30000:30000'
+
+      - name: Fails
+        id: suite-minimal-rbac
+        run: |
+          exit 1
+
+      - name: Generate support bundle on failure
+        if: failure() && steps.suite-minimal-rbac.outcome == 'failure'
+        # env:
+        #   E2E_TESTIM_AWS_ACCESS_KEY_ID: ${{ secrets.E2E_TESTIM_AWS_ACCESS_KEY_ID }}
+        #   E2E_TESTIM_AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_TESTIM_AWS_SECRET_ACCESS_KEY }}
+        run: |
+          RELEASE="$(
+            curl -sfL https://api.github.com/repos/replicatedhq/troubleshoot/releases/latest | \
+            grep '"tag_name":' | \
+            sed -E 's/.*"(v[^"]+)".*/\1/'
+          )"
+          curl -fsLO "https://github.com/replicatedhq/troubleshoot/releases/download/${RELEASE}/support-bundle_linux_amd64.tar.gz"
+          tar xzf support-bundle_linux_amd64.tar.gz
+          ./support-bundle --namespace minimal-rbac
