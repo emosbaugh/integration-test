@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// some change here
+	// some change here again
 }
 
 // GenerateBootstrapToken will generate a node join token for kubeadm.
