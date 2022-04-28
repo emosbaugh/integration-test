@@ -1,7 +1,9 @@
 name: test-cache
 
 on:
-  pull_request: 
+  push:
+    branches:    
+      - 'main'
 
 jobs:
   build:
