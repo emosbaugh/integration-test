@@ -31,6 +31,9 @@ jobs:
       )
     steps:
 
+      - name: Echo
+        run: echo hi
+
       - name: Checkout
         uses: actions/checkout@v2
 
