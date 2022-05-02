@@ -17,7 +17,7 @@ jobs:
           echo github.repository ${{github.repository}}
           echo github.event.pull_request.user.login ${{github.event.pull_request.user.login}}
 
-  build:
+  can-run-ci:
     runs-on: ubuntu-latest
     # if the event is pull_request:
     #   - this is not a fork
@@ -39,9 +39,19 @@ jobs:
         )
       )
     steps:
+      - name: ok
+        run: echo "yes"
 
+  build:
+    needs: [ can-run-ci ]
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Build
         run: go build -o test ./cmd/test/main.go
+
+  validate-success:
+    needs: [ build ]
+    uses: ./.github/workflows/branch-protection.yaml
