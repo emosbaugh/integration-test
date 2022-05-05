@@ -1,0 +1,42 @@
+name: daily-scan-images
+
+on:
+  schedule:
+    - cron: "0 16 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        working-directory: ./bin/scan-images/
+        run: npm install
+      - id: set-matrix
+        name: Build image matrix
+        run: |
+          OUTPUT=`./bin/scan-images/matrix.js`
+          echo "::set-output name=matrix::$OUTPUT"
+
+  scan-image:
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJSON(needs.build-matrix.outputs.matrix)}}
+      fail-fast: false
+      max-parallel: 5
+    steps:
+      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Write Grype config file"
+        run: if [ -n '${{ matrix.grypeConfig }}' ]; then echo '${{ matrix.grypeConfig }}' | base64 -d > .grype.yaml ; fi
+      - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Scan image"
+        id: scan
+        uses: anchore/scan-action@v3.2.4
+        with:
+          image: ${{ matrix.image }}
+          acs-report-enable: false
