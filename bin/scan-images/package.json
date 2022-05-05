@@ -9,8 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "js-yaml": "^4.1.0",
-    "lodash.merge": "^4.6.2",
     "semver": "^7.3.5",
     "yargs": "^16.2.0"
   }

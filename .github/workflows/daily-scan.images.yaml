@@ -32,16 +32,20 @@ jobs:
     steps:
       - uses: actions/setup-node@v2
       - uses: actions/checkout@v2
-      - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Write Grype config file"
-        run: if [ -n '${{ matrix.grypeConfig }}' ]; then echo '${{ matrix.grypeConfig }}' | base64 -d > .grype.yaml ; fi
       - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Scan image"
         id: scan
-        uses: anchore/scan-action@v3.2.4
+        uses: aquasecurity/trivy-action@v0.2.5
         with:
-          image: ${{ matrix.image }}
-          acs-report-enable: true
-      - name: upload Anchore scan SARIF report
+          image-ref: ${{ matrix.image }}
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'scan-output.sarif'
+          vuln-type: 'os'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Upload SARIF report
         uses: github/codeql-action/upload-sarif@v1
         if: ${{ always() }}
         with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+          sarif_file: postgres-scan-output.sarif
