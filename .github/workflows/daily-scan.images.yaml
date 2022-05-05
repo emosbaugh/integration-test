@@ -39,8 +39,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.2.5
         with:
           image-ref: ${{ matrix.image }}
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          format: 'sarif'
           output: 'scan-output.sarif'
           vuln-type: 'os'
           severity: 'CRITICAL,HIGH,MEDIUM'
