@@ -30,7 +30,12 @@ build:
 
 .PHONY: scan
 scan:
-	grype --fail-on medium --only-fixed --config ../../.grype.yaml $(IMAGE)-$(GIT_SHA)-$(DATE)
+	trivy image \
+		--exit-code=1 \
+		--severity="MEDIUM,HIGH,CRITICAL" \
+		--ignore-unfixed \
+		--ignore-policy=.trivyignore.rego \
+		$(IMAGE)-$(GIT_SHA)-$(DATE)
 
 .PHONY: push
 push:
@@ -38,4 +43,4 @@ push:
 
 .PHONY: deps
 deps:
-	curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+	curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.27.1
