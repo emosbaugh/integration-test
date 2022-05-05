@@ -3,6 +3,8 @@
 const fs = require('fs');
 const semver = require('semver');
 const yargs = require('yargs');
+const yaml = require('js-yaml');
+const merge = require('lodash.merge');
 const { hideBin } = require('yargs/helpers');
 const { InstallerVersions } = require('../../web/src/installers/versions');
 
@@ -26,11 +28,14 @@ var getImages = () => {
             if (!fs.existsSync(manifestFile)) {
                 return;
             }
-            const grypeConfigFile = `${specDir}/${addon}/${version}/.grype.yaml`;
-            let grypeConfig = '';
-            if (fs.existsSync(grypeConfigFile)) {
-                grypeConfig = Buffer.from(fs.readFileSync(grypeConfigFile, 'utf-8')).toString('base64'); // remove newlines
+            const grypeConfigFile = `./bin/scan-images/.grype.yaml`;
+            let grypeConfig = yaml.load(fs.readFileSync(grypeConfigFile, 'utf-8'));
+            const grypeConfigFileOverride = `${specDir}/${addon}/${version}/.grype.yaml`;
+            if (fs.existsSync(grypeConfigFileOverride)) {
+                const grypeConfigOverride = yaml.load(fs.readFileSync(grypeConfigFileOverride, 'utf-8'));
+                grypeConfig = merge(grypeConfig, grypeConfigOverride);
             }
+            const grypeConfigBase64 = Buffer.from(yaml.dump(grypeConfig)).toString('base64');
             fs.readFileSync(manifestFile, 'utf-8').split(/\r?\n/).forEach((line) => {
                 const parts = line.split(' ');
                 if (parts[0] !== 'image') {
@@ -41,7 +46,7 @@ var getImages = () => {
                     version: version,
                     name: parts[1],
                     image: parts[2],
-                    grypeConfig: grypeConfig,
+                    grypeConfig: grypeConfigBase64,
                 };
                 images.push(image);
             });
