@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v2
       - uses: actions/checkout@v2
       - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Write Trivy ignore file"
-        run: echo '${{ matrix.trivyignore }}' | base64 -d > .trivyignore.rego
+        run: if [ -n '${{ matrix.trivyignore }}' ]; then echo '${{ matrix.trivyignore }}' | base64 -d > .trivyignore.rego ; fi
       - name: "${{ matrix.addon }}:${{ matrix.version }} - ${{ matrix.name }} : Scan image"
         id: scan
         uses: aquasecurity/trivy-action@0.2.5
@@ -46,7 +46,7 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
           ignore-unfixed: true
           exit-code: '1'
-          ignore-policy: .trivyignore.rego
+          ignore-policy: ${{ matrix.trivyignore && '.trivyignore.rego' }}
       - name: Upload SARIF report
         uses: github/codeql-action/upload-sarif@v1
         if: ${{ always() }}
