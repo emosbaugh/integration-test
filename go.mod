@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.6.0
 	k8s.io/apimachinery v0.23.6
 	k8s.io/client-go v1.5.2
 	k8s.io/cluster-bootstrap v0.23.6
